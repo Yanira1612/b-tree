@@ -85,6 +85,9 @@ private:
     }
 
     void insertLeaf(int key, Node* cursor) {
+        Node* padre = new Node(true);
+        padre=findParent(this->root,cursor);
+   //     int pos=findPosition(padre,cursor);
         std::cout << "Inserting key " << key << " in leaf node with keys: ";
         for (int k : cursor->keys) {
             std::cout << k << " ";
@@ -137,7 +140,8 @@ private:
                 newRoot->keys.push_back(midKey);
                 newRoot->children.push_back(cursor);
                 newRoot->children.push_back(newLeaf);
-                root->children[0]=newRoot;
+                padre->children[0]=newRoot;
+              //  root->children[0]=newRoot;
               //  root->children.push_back(newRoot);
 
                 std::cout << "New root node:\n";
@@ -146,6 +150,34 @@ private:
         }
     }
 
+    int findPosition(Node* parent, Node* child) {
+    for (size_t i = 0; i < parent->children.size(); ++i) {
+        if (parent->children[i] == child) {
+            return i;
+        }
+    }
+    return -1; // Nodo no encontrado
+}
+
+
+    Node* findParent(Node* root, Node* child) {
+    if (root == nullptr || root->isLeaf) {
+        return nullptr;
+    }
+
+    for (Node* node : root->children) {
+        if (node == child) {
+            return root;
+        }
+        Node* parent = findParent(node, child);
+        if (parent != nullptr) {
+            return parent;
+        }
+    }
+    return nullptr;
+}
+
+/*
     Node* findParent(Node* cursor, Node* child) {
         if (cursor->isLeaf || cursor->children[0]->isLeaf) {
             return nullptr;
@@ -163,7 +195,7 @@ private:
         }
 
         return nullptr;
-    }
+    }*/
 
 public:
     BPlusTree(int maxKeys) : maxKeys(maxKeys), root(new Node(true)) {}
